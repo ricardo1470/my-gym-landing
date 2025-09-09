@@ -52,18 +52,22 @@ export default function FitnessLanding() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0"
           style={{
             backgroundImage: "url('/attractive-fitness-model-transformation.jpg')",
+            backgroundSize: "cover",   // asegura que siempre cubra toda la pantalla
+            backgroundPosition: "center", // centra la imagen
+            backgroundRepeat: "no-repeat",
           }}
         />
         <div className="absolute inset-0 bg-black/50" />
+        
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             Transforma tu cuerpo. <br />
             <span className="text-primary">Transforma tu vida.</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-pretty">
+          <p className="text-xl md:text-2xl mb-8">
             Servicios personalizados de entrenamiento, nutrición y suplementación que te llevarán al siguiente nivel
           </p>
           <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
