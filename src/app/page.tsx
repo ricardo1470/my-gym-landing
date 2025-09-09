@@ -50,15 +50,13 @@ export default function FitnessLanding() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: "url('/attractive-fitness-model-transformation.jpg')",
-            backgroundSize: "cover",   // asegura que siempre cubra toda la pantalla
-            backgroundPosition: "center", // centra la imagen
-            backgroundRepeat: "no-repeat",
-          }}
+      <section className='relative h-screen flex items-center justify-center overflow-hidden'>
+        <Image
+          src='/attractive-fitness-model-transformation.jpg'
+          fill={true}
+          objectFit='cover'
+          className='object-top'
+          alt='Background image'
         />
         <div className="absolute inset-0 bg-black/50" />
         
