@@ -18,11 +18,13 @@ import {
   MapPin,
   Mail,
   MessageCircle,
+  MessageCircleHeart,
   Instagram,
   Facebook,
   Twitter,
   ChevronLeft,
   ChevronRight,
+  Laptop,
 } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
@@ -154,8 +156,8 @@ export default function FitnessLanding() {
               },
               {
                 icon: <Users className="w-12 h-12 text-primary" />,
-                title: "Seminarios Exclusivos",
-                description: "Eventos mensuales con expertos en fitness y salud",
+                title: "Asesoría Online",
+                description: "Accede a rutinas y seguimiento con nuestro acompañamiento personalizado en línea.",
               },
             ].map((service, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
@@ -354,7 +356,7 @@ export default function FitnessLanding() {
                   <Facebook className="w-5 h-5" />
                 </Button>
                 <Button variant="outline" size="icon" className="border-gray-600 hover:bg-primary bg-transparent">
-                  <Twitter className="w-5 h-5" />
+                  <MessageCircle className="w-5 h-5" />
                 </Button>
               </div>
             </div>
