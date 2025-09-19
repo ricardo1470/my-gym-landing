@@ -2,32 +2,32 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
 import {
   Dumbbell,
   Apple,
   Pill,
   Users,
   CheckCircle,
-  Star,
+  //Star,
   Phone,
   MapPin,
   Mail,
   MessageCircle,
-  MessageCircleHeart,
+  //MessageCircleHeart,
   Instagram,
   Facebook,
-  Twitter,
+  //Twitter,
   ChevronLeft,
   ChevronRight,
-  Laptop,
+  //Laptop,
 } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
+import ContactForm from "@/components/ContactForm"
+import Hero from "@/components/Hero"
+import Testimonials from "@/components/Testimonials"
+
 
 export default function FitnessLanding() {
   const [currentImage, setCurrentImage] = useState(0)
@@ -50,88 +50,10 @@ export default function FitnessLanding() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className='relative h-screen flex items-center justify-center overflow-hidden'>
-        <Image
-          src='/attractive-fitness-model-transformation.jpg'
-          fill={true}
-          objectFit='cover'
-          className='object-top'
-          alt='Background image'
-        />
-        <div className="absolute inset-0 bg-black/50" />
-        
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Transforma tu cuerpo. <br />
-            <span className="text-primary">Transforma tu vida.</span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-8">
-            Servicios personalizados de entrenamiento, nutrición y suplementación que te llevarán al siguiente nivel
-          </p>
-          <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
-            Solicita tu asesoría gratuita
-          </Button>
-          <div className="mt-8">
-            <Badge variant="secondary" className="text-sm px-4 py-2">
-              ⏰ Oferta limitada - Solo 10 cupos disponibles este mes
-            </Badge>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-muted">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 text-balance">
-            Casos de <span className="text-primary">Éxito Real</span>
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "María González",
-                result: "Perdí 15kg en 4 meses",
-                quote: "El plan personalizado cambió completamente mi relación con el ejercicio y la comida.",
-                image: "/happy-woman-fitness-transformation.jpg",
-              },
-              {
-                name: "Carlos Ruiz",
-                result: "Ganó 8kg de músculo",
-                quote: "Nunca pensé que podría lograr estos resultados. El seguimiento semanal fue clave.",
-                image: "/muscular-man-fitness-success.jpg",
-              },
-              {
-                name: "Ana Martín",
-                result: "Corrió su primer maratón",
-                quote:
-                  "De no poder correr 5 minutos a completar 42km. Los seminarios me dieron la mentalidad correcta.",
-                image: "/woman-runner-marathon-achievement.jpg",
-              },
-            ].map((testimonial, index) => (
-              <Card key={index} className="text-center">
-                <CardHeader>
-                  <Image
-                    src={testimonial.image || "/placeholder.svg"}
-                    alt={testimonial.name}
-                    width={80}
-                    height={80}
-                    className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
-                  />
-                  <CardTitle className="text-xl">{testimonial.name}</CardTitle>
-                  <CardDescription className="text-primary font-semibold text-lg">{testimonial.result}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-center mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-secondary text-secondary" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground italic">&ldquo;{testimonial.quote}&rdquo;</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Testimonials />
 
       {/* Services Section */}
       <section className="py-20">
@@ -252,42 +174,13 @@ export default function FitnessLanding() {
       </section>
 
       {/* Contact Form */}
-      <section className="py-20 bg-muted">
+      <section id="contact-form" className="py-20 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-8 text-balance">
               Comienza tu <span className="text-primary">Transformación</span>
             </h2>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-center">Solicita tu Plan Personalizado</CardTitle>
-                <CardDescription className="text-center">
-                  Completa el formulario y nos pondremos en contacto contigo en menos de 24 horas
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nombre completo</Label>
-                  <Input id="name" placeholder="Tu nombre" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Correo electrónico</Label>
-                  <Input id="email" type="email" placeholder="tu@email.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="goal">¿Cuál es tu objetivo principal?</Label>
-                  <Textarea id="goal" placeholder="Ej: Perder peso, ganar músculo, mejorar resistencia..." rows={3} />
-                </div>
-                <Button className="w-full text-lg py-6">Quiero mi plan personalizado</Button>
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-2">O contáctanos directamente:</p>
-                  <Button variant="outline" className="w-full bg-transparent">
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    WhatsApp: +57 318 5228487
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <ContactForm />
           </div>
         </div>
       </section>
