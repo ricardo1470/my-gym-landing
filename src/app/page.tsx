@@ -24,7 +24,7 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 import Image from "next/image"
-import ContactForm from "@/components/ContactForm"
+//import ContactForm from "@/components/ContactForm"
 import Hero from "@/components/Hero"
 import Testimonials from "@/components/Testimonials"
 import PricingCards from "@/components/PricingCards"

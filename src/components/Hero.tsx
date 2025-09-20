@@ -6,21 +6,25 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 
 export default function Hero() {
-    const [cuposRestantes, setCuposRestantes] = useState<number | null>(null);
+    const [totalDiscountCupos, setTotalDiscountCupos] = useState<number | null>(null);
 
-    // 🔹 Llamamos al backend para obtener los cupos
     useEffect(() => {
-        const fetchCupos = async () => {
+        const fetchDiscountCupos = async () => {
             try {
-                const res = await fetch("/api/cupos"); // endpoint que devuelve { max, usados }
+                const res = await fetch("/api/cupos");
                 const data = await res.json();
-                setCuposRestantes(data.max - data.usados);
+                setTotalDiscountCupos(data.totalDiscountedCupos || 0);
             } catch (err) {
-                console.error("Error obteniendo cupos:", err);
+                console.error("Error obteniendo cupos con descuento:", err);
             }
         };
-        fetchCupos();
+        fetchDiscountCupos();
     }, []);
+
+    const scrollToPricing = () => {
+        const pricingSection = document.getElementById("pricing");
+        pricingSection?.scrollIntoView({ behavior: "smooth" });
+    };
 
     return (
         <section className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -46,18 +50,19 @@ export default function Hero() {
                 <Button
                     size="lg"
                     className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
-                    onClick={() => {
-                        const formSection = document.getElementById("contact-form");
-                        formSection?.scrollIntoView({ behavior: "smooth" });
-                    }}
+                    onClick={scrollToPricing}
                 >
-                    Solicita tu asesoría gratuita
+                    Ver Ofertas Especiales
                 </Button>
 
                 <div className="mt-8">
-                    <Badge variant="secondary" className="text-sm px-4 py-2">
-                        ⏰ Oferta limitada – Solo {cuposRestantes} cupos disponibles este mes
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-red-100 text-red-700 border border-red-200">
+                        🔥 Descuentos especiales limitados – Solo {totalDiscountCupos} cupos con descuento disponibles
                     </Badge>
+                </div>
+
+                <div className="mt-6 text-sm text-gray-300">
+                    <p>Hasta 30% de descuento en planes selectos</p>
                 </div>
             </div>
         </section>

@@ -1,17 +1,29 @@
 // src/models/Cupo.ts
 import mongoose, { Schema, models, model } from "mongoose";
 
+interface IPlanDiscount {
+  planId: string; // 'basico', 'premium', 'elite'
+  maxCupos: number;
+  usedCupos: number;
+  discountPercentage: number;
+}
+
 interface ICupo {
-  max: number;
-  usados: number;
+  planDiscounts: IPlanDiscount[];
   lastReset: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
+const PlanDiscountSchema = new Schema({
+  planId: { type: String, required: true },
+  maxCupos: { type: Number, required: true, default: 6 },
+  usedCupos: { type: Number, required: true, default: 0 },
+  discountPercentage: { type: Number, required: true }
+});
+
 const CupoSchema = new Schema({
-  max: { type: Number, required: true, default: 10 },
-  usados: { type: Number, required: true, default: 0 },
+  planDiscounts: [PlanDiscountSchema],
   lastReset: { type: Date, default: () => new Date() },
 }, { timestamps: true });
 
