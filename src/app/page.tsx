@@ -27,6 +27,7 @@ import Image from "next/image"
 import ContactForm from "@/components/ContactForm"
 import Hero from "@/components/Hero"
 import Testimonials from "@/components/Testimonials"
+import PricingCards from "@/components/PricingCards"
 
 
 export default function FitnessLanding() {
@@ -152,12 +153,11 @@ export default function FitnessLanding() {
           <h2 className="text-4xl font-bold text-center mb-16 text-balance">
             ¿Por qué <span className="text-primary">Elegirnos?</span>
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {[
               "Seguimiento semanal personalizado",
               "Comunidad activa de apoyo",
               "Resultados garantizados",
-              "Acceso a contenido exclusivo",
             ].map((benefit, index) => (
               <div key={index} className="flex items-center space-x-3">
                 <CheckCircle className="w-6 h-6 text-primary flex-shrink-0" />
@@ -182,6 +182,22 @@ export default function FitnessLanding() {
             </h2>
             <ContactForm />
           </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 bg-muted">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-8 text-balance">
+              Elige tu <span className="text-primary">Plan de Transformación</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Cada plan está diseñado para adaptarse a tus objetivos y nivel de compromiso.
+              Comienza tu transformación hoy mismo.
+            </p>
+          </div>
+          <PricingCards />
         </div>
       </section>
 
@@ -220,13 +236,6 @@ export default function FitnessLanding() {
                 <AccordionContent>
                   Sí, ofrecemos flexibilidad total. Puedes pausar o cancelar tu plan con 30 días de aviso. También
                   ofrecemos garantía de satisfacción en los primeros 60 días.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-5">
-                <AccordionTrigger className="text-left">¿Los seminarios tienen costo adicional?</AccordionTrigger>
-                <AccordionContent>
-                  No, todos los seminarios mensuales están incluidos en tu plan. También tienes acceso a las grabaciones
-                  de seminarios anteriores y material educativo exclusivo.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
