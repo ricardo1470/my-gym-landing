@@ -30,39 +30,51 @@ export default function Hero() {
         <section className="relative h-screen flex items-center justify-center overflow-hidden">
             <Image
                 src="/banner.jpg"
-                fill={true}
+                fill
                 className="object-cover object-top"
                 alt="Background image"
             />
             <div className="absolute inset-0 bg-black/50" />
 
-            <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
-                    Transforma tu cuerpo. <br className="hidden sm:block" />
-                    <span className="sm:hidden"> </span>
-                    <span className="text-primary">Transforma tu vida.</span>
+            <div className="relative z-10 text-center text-white px-2 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+
+                {/* Título */}
+                <h1 className="font-bold mb-4 sm:mb-6 leading-snug sm:leading-tight text-[clamp(1.5rem,5vw,3rem)] sm:text-[clamp(2rem,4vw,4rem)]">
+                    <span className="block sm:hidden">
+                        Transforma tu cuerpo y tu vida
+                    </span>
+                    <span className="hidden sm:block">
+                        Transforma tu cuerpo. <br />
+                        <span className="text-primary">Transforma tu vida.</span>
+                    </span>
                 </h1>
 
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 px-2 sm:px-0">
-                    Servicios personalizados de entrenamiento, nutrición y suplementación
-                    que te llevarán al siguiente nivel
+                {/* Párrafo */}
+                <p className="mb-6 sm:mb-8 px-2 sm:px-0 mx-auto leading-relaxed text-[clamp(0.9rem,2.5vw,1.25rem)] max-w-xs sm:max-w-2xl">
+                    Entrenamiento, nutrición y suplementación personalizados para llevarte al siguiente nivel
                 </p>
 
+                {/* Botón CTA */}
                 <Button
                     size="lg"
-                    className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 bg-primary hover:bg-primary/90 mb-6 sm:mb-0"
+                    className="text-sm sm:text-lg px-5 sm:px-8 py-3 sm:py-6 bg-primary hover:bg-primary/90 mb-6 sm:mb-0"
                     onClick={scrollToPricing}
                 >
                     Ver Ofertas Especiales
                 </Button>
 
+                {/* Badge */}
                 <div className="mt-6 sm:mt-8">
-                    <Badge variant="secondary" className="text-xs sm:text-sm px-3 sm:px-4 py-2 bg-red-100 text-red-700 border border-red-200 inline-block max-w-full">
+                    <Badge
+                        variant="secondary"
+                        className="text-[clamp(0.65rem,2vw,0.85rem)] sm:text-sm px-3 sm:px-4 py-1 sm:py-2 bg-red-100 text-red-700 border border-red-200 inline-block max-w-full"
+                    >
                         🔥 Descuentos especiales limitados – Solo {totalDiscountCupos} cupos con descuento disponibles
                     </Badge>
                 </div>
 
-                <div className="mt-4 sm:mt-6 text-xs sm:text-sm text-gray-300">
+                {/* Texto pequeño */}
+                <div className="mt-4 sm:mt-6 text-[clamp(0.65rem,2vw,0.85rem)] sm:text-sm text-gray-300">
                     <p>Hasta 30% de descuento en planes selectos</p>
                 </div>
             </div>
