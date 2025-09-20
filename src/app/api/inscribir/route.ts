@@ -36,22 +36,22 @@ export async function POST(req: Request) {
 
     // Encontrar el plan específico
     const planDiscount = cupo.planDiscounts.find((p: PlanDiscount) => p.planId === selectedPlanId);
-    
+
     if (!planDiscount) {
       return NextResponse.json({ error: "Plan no encontrado" }, { status: 404 });
     }
 
     // Verificar si hay cupos disponibles para este plan
     if (planDiscount.usedCupos >= planDiscount.maxCupos) {
-      return NextResponse.json({ 
-        error: `Ya no quedan cupos con descuento disponibles para el plan ${selectedPlanId}` 
+      return NextResponse.json({
+        error: `Ya no quedan cupos con descuento disponibles para el plan ${selectedPlanId}`
       }, { status: 400 });
     }
 
     // Guardar inscripción con información del plan
-    await Inscripcion.create({ 
-      nombre, 
-      email, 
+    await Inscripcion.create({
+      nombre,
+      email,
       objetivo,
       planId: selectedPlanId,
       discountApplied: true,
