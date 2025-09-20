@@ -1,6 +1,5 @@
 "use client"
 
-import React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,11 +8,6 @@ import {
     Crown,
     Dumbbell,
     MessageCircle,
-    Apple,
-    Users,
-    Calendar,
-    Pill,
-    BookOpen,
     Trophy
 } from "lucide-react"
 
@@ -31,7 +25,7 @@ interface Plan {
     popular?: boolean
     premium?: boolean
     features: PlanFeature[]
-    icon: JSX.Element
+    icon: React.ReactElement
     buttonText: string
     buttonVariant: "default" | "outline" | "secondary"
 }
@@ -52,6 +46,7 @@ const plans: Plan[] = [
             { text: "Seguimiento semanal", included: true },
             { text: "Acceso a la app móvil", included: true },
             { text: "Soporte por WhatsApp", included: true },
+            { text: "Seminarios mensuales", included: false },
             { text: "Suplementación guiada", included: false },
             { text: "Asesoría nutricional avanzada", included: false },
         ]
@@ -72,6 +67,7 @@ const plans: Plan[] = [
             { text: "Seguimiento semanal personalizado", included: true },
             { text: "Acceso a la app móvil", included: true },
             { text: "Soporte 24/7 por WhatsApp", included: true },
+            { text: "Seminarios mensuales exclusivos", included: true },
             { text: "Suplementación guiada personalizada", included: true },
             { text: "Asesoría nutricional avanzada", included: true },
         ]
@@ -94,6 +90,7 @@ const plans: Plan[] = [
             { text: "Análisis corporal avanzado mensual", included: true },
             { text: "Protocolo de suplementación premium", included: true },
             { text: "Soporte nutricional especializado", included: true },
+            { text: "Comunidad exclusiva Elite", included: true },
         ]
     }
 ]

@@ -174,6 +174,7 @@ export default function FitnessLanding() {
       </section>
 
       {/* Contact Form */}
+      {/*
       <section id="contact-form" className="py-20 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
@@ -183,7 +184,7 @@ export default function FitnessLanding() {
             <ContactForm />
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-muted">
