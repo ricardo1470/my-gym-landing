@@ -18,7 +18,7 @@ const testimonials = [
         result: "Perdí 15kg en 4 meses",
         quote:
             "El plan personalizado cambió completamente mi relación con el ejercicio y la comida.",
-        images: ["/PaolaCalambas3.jpg", "/PaolaCalambas2.jpg"], // 👈 ahora varias imágenes
+        images: ["/PaolaCalambas3.jpg", "/PaolaCalambas2.jpg"],
         story:
             "Paola comenzó con la meta clara de transformar su core y mejorar su condición física. Con disciplina, constancia y acompañamiento, logró reducir grasa abdominal, tonificar sus piernas y fortalecer su abdomen. Hoy refleja la seguridad de alguien que ha tomado el control de su salud.",
     },
