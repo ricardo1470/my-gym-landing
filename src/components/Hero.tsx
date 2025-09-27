@@ -29,7 +29,7 @@ export default function Hero() {
     return (
         <section className="relative h-screen flex items-center justify-center overflow-hidden">
             <Image
-                src="/banner.jpg"
+                src="/banner2.jpg"
                 fill
                 className="object-cover object-top"
                 alt="Background image"

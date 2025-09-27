@@ -44,9 +44,7 @@ const plans: Plan[] = [
             { text: "Rutina de entrenamiento personalizada", included: true },
             { text: "Plan nutricional básico", included: true },
             { text: "Seguimiento semanal", included: true },
-            { text: "Acceso a la app móvil", included: true },
             { text: "Soporte por WhatsApp", included: true },
-            { text: "Seminarios mensuales", included: false },
             { text: "Suplementación guiada", included: false },
             { text: "Asesoría nutricional avanzada", included: false },
         ]
@@ -65,9 +63,7 @@ const plans: Plan[] = [
             { text: "Rutina de entrenamiento personalizada", included: true },
             { text: "Plan nutricional completo y detallado", included: true },
             { text: "Seguimiento semanal personalizado", included: true },
-            { text: "Acceso a la app móvil", included: true },
             { text: "Soporte 24/7 por WhatsApp", included: true },
-            { text: "Seminarios mensuales exclusivos", included: true },
             { text: "Suplementación guiada personalizada", included: true },
             { text: "Asesoría nutricional avanzada", included: true },
         ]
@@ -86,7 +82,6 @@ const plans: Plan[] = [
             { text: "Todo lo incluido en Plan Premium", included: true },
             { text: "Sesiones de coaching 1:1 mensuales", included: true },
             { text: "Plan de competencia o objetivos específicos", included: true },
-            { text: "Acceso prioritario a seminarios VIP", included: true },
             { text: "Análisis corporal avanzado mensual", included: true },
             { text: "Protocolo de suplementación premium", included: true },
             { text: "Soporte nutricional especializado", included: true },
