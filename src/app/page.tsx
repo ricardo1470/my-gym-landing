@@ -221,7 +221,7 @@ export default function FitnessLanding() {
                 <AccordionTrigger className="text-left">¿Qué incluye exactamente la asesoría?</AccordionTrigger>
                 <AccordionContent>
                   Incluye plan de entrenamiento personalizado, guía nutricional completa, recomendaciones de
-                  suplementación, seguimiento semanal, acceso a seminarios mensuales y soporte 24/7 a través de nuestra
+                  suplementación, seguimiento semanal y soporte 24/7 a través de nuestra
                   comunidad.
                 </AccordionContent>
               </AccordionItem>
@@ -272,7 +272,6 @@ export default function FitnessLanding() {
                 <li>Entrenamiento Personal</li>
                 <li>Nutrición Deportiva</li>
                 <li>Suplementación</li>
-                <li>Seminarios</li>
               </ul>
             </div>
 
