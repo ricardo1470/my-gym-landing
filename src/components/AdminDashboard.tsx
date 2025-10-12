@@ -344,6 +344,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                             <TableRow>
                                 <TableHead>País</TableHead>
                                 <TableHead>Ciudad</TableHead>
+                                <TableHead>Hora</TableHead>
                                 <TableHead className="text-right">Visitas</TableHead>
                                 <TableHead className="text-right">% del Total</TableHead>
                             </TableRow>
@@ -353,6 +354,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                                 <TableRow key={index}>
                                     <TableCell className="font-medium">{geo._id.country}</TableCell>
                                     <TableCell>{geo._id.city}</TableCell>
+                                    <TableCell>{new Date().toLocaleTimeString()}</TableCell>
                                     <TableCell className="text-right">{geo.count}</TableCell>
                                     <TableCell className="text-right">
                                         {((geo.count / data.totalVisitas) * 100).toFixed(1)}%

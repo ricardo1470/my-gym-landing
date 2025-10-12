@@ -24,6 +24,7 @@ export async function connectDB() {
 
   if (!cached!.promise) {
     const uri = process.env.MONGODB_URI; // <- ahora se evalúa en runtime
+
     if (!uri) {
       throw new Error("Please define the MONGODB_URI environment variable");
     }

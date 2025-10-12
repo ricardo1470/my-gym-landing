@@ -5,18 +5,26 @@ import { connectDB } from '@/lib/mongodb';
 import Inscripcion from '@/models/Inscripcion';
 import Visit from '@/models/Visit';
 import Cupo from '@/models/Cupo';
+import bcrypt from 'bcryptjs';
 
 export async function GET(req: Request) {
     const url = new URL(req.url);
     const password = url.searchParams.get('password');
-    const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD;
+    
+    const DASHBOARD_PASSWORD_HASH = process.env.DASHBOARD_PASSWORD_HASH;
 
-    if (!DASHBOARD_PASSWORD) {
-        return NextResponse.json({ error: "Contraseña de Dashboard no configurada en variables de entorno." }, { status: 500 });
+    if (!DASHBOARD_PASSWORD_HASH) {
+        return NextResponse.json({ error: "Hash de Contraseña de Dashboard no configurado." }, { status: 500 });
     }
 
-    if (password !== DASHBOARD_PASSWORD) {
-        return NextResponse.json({ error: "Acceso denegado. Contraseña incorrecta." }, { status: 401 });
+    if (!password) {
+        return NextResponse.json({ error: "Acceso denegado. Contraseña requerida." }, { status: 401 });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, DASHBOARD_PASSWORD_HASH);
+
+    if (!isPasswordValid) {
+        return NextResponse.json({ error: "Acceso denegado. Credenciales inválidas." }, { status: 401 });
     }
 
     try {
