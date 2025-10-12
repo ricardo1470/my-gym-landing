@@ -1,4 +1,5 @@
 // src/app/api/db-test/route.ts
+
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Cupo from "@/models/Cupo";

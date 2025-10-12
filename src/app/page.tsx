@@ -1,37 +1,53 @@
-"use client"
+// src/app/page.tsx
+"use client" // Ya lo tienes, ¡perfecto!
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { useEffect, useState } from "react" // <-- Asegúrate de importar useEffect
+import Image from "next/image"
 import {
   Dumbbell,
   Apple,
   Pill,
   Users,
   CheckCircle,
-  //Star,
   Phone,
   MapPin,
   Mail,
   MessageCircle,
-  //MessageCircleHeart,
   Instagram,
   Facebook,
-  //Twitter,
   ChevronLeft,
   ChevronRight,
-  //Laptop,
 } from "lucide-react"
-import { useState } from "react"
-import Image from "next/image"
-//import ContactForm from "@/components/ContactForm"
+
+// Importaciones de tus componentes
 import Hero from "@/components/Hero"
 import Testimonials from "@/components/Testimonials"
 import PricingCards from "@/components/PricingCards"
+//import LeadForm from "@/components/LeadForm" // <--- Descomentado y añadido al final de la página
+
+// Importaciones de UI
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+//import LeadForm from "@/components/LeadForm"
+
+// 💡 FUNCIÓN DE TRACKING
+const trackVisit = async () => {
+    try {
+        await fetch('/api/visit', { method: 'POST' });
+    } catch (error) {
+        console.error('Failed to track visit:', error);
+    }
+};
 
 
-export default function FitnessLanding() {
+export default function Home() { // Usamos 'Home' por convención
   const [currentImage, setCurrentImage] = useState(0)
+
+  // 💡 1. REGISTRAR LA VISITA AL MONTAR EL COMPONENTE
+  useEffect(() => {
+    trackVisit();
+  }, []); // Se ejecuta solo una vez al cargar la página
 
   const carouselImages = [
     "/person-doing-intense-workout-in-modern-gym.jpg",
@@ -173,19 +189,6 @@ export default function FitnessLanding() {
         </div>
       </section>
 
-      {/* Contact Form */}
-      {/*
-      <section id="contact-form" className="py-20 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-8 text-balance">
-              Comienza tu <span className="text-primary">Transformación</span>
-            </h2>
-            <ContactForm />
-          </div>
-        </div>
-      </section>*/}
-
       {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-muted">
         <div className="container mx-auto px-4">
@@ -202,6 +205,19 @@ export default function FitnessLanding() {
         </div>
       </section>
 
+      {/* 💡 SECCIÓN DEL FORMULARIO DE CONTACTO (ContactForm) */}
+      <section id="contact-form" className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-8 text-balance">
+              Comienza tu <span className="text-primary">Transformación</span>
+            </h2>
+            {/* Componente ContactForm agregado */}
+            {/*<LeadForm />*/}
+          </div>
+        </div>
+      </section>
+      
       {/* FAQ Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">

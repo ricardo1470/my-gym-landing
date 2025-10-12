@@ -1,4 +1,5 @@
 // src/app/api/cupos/migrate/route.ts
+
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/mongodb"
 import Cupo from "@/models/Cupo"
@@ -7,14 +8,11 @@ export async function POST() {
     try {
         await connectDB()
 
-        // Buscar el documento existente con el formato antiguo
         const oldCupo = await Cupo.findOne()
 
         if (oldCupo && !oldCupo.planDiscounts) {
-            // Si existe el formato antiguo, lo eliminamos y creamos el nuevo
             await Cupo.deleteMany({})
 
-            // Crear el nuevo formato con descuentos por defecto
             const newCupo = await Cupo.create({
                 planDiscounts: [
                     { planId: 'basico', maxCupos: 4, usedCupos: 0, discountPercentage: 20 },
@@ -30,7 +28,6 @@ export async function POST() {
             })
         }
 
-        // Si ya tiene el nuevo formato, solo inicializar valores por defecto si está vacío
         if (!oldCupo) {
             const newCupo = await Cupo.create({
                 planDiscounts: [
