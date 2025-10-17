@@ -230,7 +230,7 @@ export default function TiendaPage() {
             <section className="py-16">
                 <div className="container mx-auto px-4">
                     <Tabs defaultValue="supplements" className="w-full">
-                        <TabsList className="grid w-full grid-cols-4 mb-12">
+                        <TabsList className="flex w-full mb-12 overflow-x-auto whitespace-nowrap justify-start md:grid md:grid-cols-4 md:justify-center">
                             <TabsTrigger value="supplements">Suplementos</TabsTrigger>
                             <TabsTrigger value="mens">Ropa Hombre</TabsTrigger>
                             <TabsTrigger value="womens">Ropa Mujer</TabsTrigger>
