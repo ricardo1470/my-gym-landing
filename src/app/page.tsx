@@ -20,9 +20,11 @@ import {
 } from "lucide-react"
 
 // Importaciones de tus componentes
+import Header from "@/components/Header"
 import Hero from "@/components/Hero"
 import Testimonials from "@/components/Testimonials"
 import PricingCards from "@/components/PricingCards"
+import Footer from '@/components/Footer';
 //import LeadForm from "@/components/LeadForm" // <--- Descomentado y añadido al final de la página
 
 // Importaciones de UI
@@ -33,11 +35,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 // 💡 FUNCIÓN DE TRACKING
 const trackVisit = async () => {
-    try {
-        await fetch('/api/visit', { method: 'POST' });
-    } catch (error) {
-        console.error('Failed to track visit:', error);
-    }
+  try {
+    await fetch('/api/visit', { method: 'POST' });
+  } catch (error) {
+    console.error('Failed to track visit:', error);
+  }
 };
 
 
@@ -66,6 +68,10 @@ export default function Home() { // Usamos 'Home' por convención
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
+      <Header />
+
+
       {/* Hero Section */}
       <Hero />
 
@@ -73,7 +79,7 @@ export default function Home() { // Usamos 'Home' por convención
       <Testimonials />
 
       {/* Services Section */}
-      <section className="py-20">
+      <section className="py-20" id="servicios">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16 text-balance">
             Nuestros <span className="text-primary">Servicios</span>
@@ -125,42 +131,41 @@ export default function Home() { // Usamos 'Home' por convención
             Vive la <span className="text-primary">Experiencia</span>
           </h2>
           <div className="relative max-w-4xl mx-auto">
-              <Image
-                src={carouselImages[currentImage] || "/placeholder.svg"}
-                alt="Fitness experience"
-                className="w-full h-full object-cover transition-opacity duration-500"
-                width={1024}
-                height={576}
-              />
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
-                onClick={prevImage}
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
-                onClick={nextImage}
-              >
-                <ChevronRight className="w-6 h-6" />
-              </Button>
-            </div>
-            <div className="flex justify-center mt-6 space-x-2">
-              {carouselImages.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentImage ? "bg-primary" : "bg-gray-300"
-                  }`}
-                  onClick={() => setCurrentImage(index)}
-                />
-              ))}
-            </div>
+            <Image
+              src={carouselImages[currentImage] || "/placeholder.svg"}
+              alt="Fitness experience"
+              className="w-full h-full object-cover transition-opacity duration-500"
+              width={1024}
+              height={576}
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+              onClick={prevImage}
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+              onClick={nextImage}
+            >
+              <ChevronRight className="w-6 h-6" />
+            </Button>
           </div>
+          <div className="flex justify-center mt-6 space-x-2">
+            {carouselImages.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full transition-colors ${index === currentImage ? "bg-primary" : "bg-gray-300"
+                  }`}
+                onClick={() => setCurrentImage(index)}
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Benefits Section */}
@@ -217,7 +222,7 @@ export default function Home() { // Usamos 'Home' por convención
           </div>
         </div>
       </section>
-      
+
       {/* FAQ Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
@@ -261,72 +266,7 @@ export default function Home() { // Usamos 'Home' por convención
       </section>
 
       {/* Footer */}
-      <footer className="bg-black text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-4 text-primary">FitTransform</h3>
-              <p className="text-gray-300 mb-4">
-                Tu centro de transformación integral. Más que un gimnasio, tu nuevo estilo de vida.
-              </p>
-              <div className="flex space-x-4">
-                <Button variant="outline" size="icon" className="border-gray-600 hover:bg-primary bg-transparent">
-                  <Instagram className="w-5 h-5" />
-                </Button>
-                <Button variant="outline" size="icon" className="border-gray-600 hover:bg-primary bg-transparent">
-                  <Facebook className="w-5 h-5" />
-                </Button>
-                <Button variant="outline" size="icon" className="border-gray-600 hover:bg-primary bg-transparent">
-                  <MessageCircle className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Servicios</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li>Entrenamiento Personal</li>
-                <li>Nutrición Deportiva</li>
-                <li>Suplementación</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contacto</h4>
-              <div className="space-y-3 text-gray-300">
-                <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4" />
-                  <span>AV siempre Viva 123</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4" />
-                  <span>+57 318 5228487</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4" />
-                  <span>info@fittransform.com</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Horarios</h4>
-              <div className="space-y-2 text-gray-300">
-                <div>Lun - Vie: 6:00 - 22:00</div>
-                <div>Sábados: 8:00 - 13:00</div>
-              </div>
-              <Button className="mt-4 w-full bg-primary hover:bg-primary/90">
-                <MessageCircle className="w-4 h-4 mr-2" />
-                WhatsApp Directo
-              </Button>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 FitTransform. Todos los derechos reservados.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

@@ -7,27 +7,27 @@ import Visit from '@/models/Visit';
 import Cupo from '@/models/Cupo';
 import bcrypt from 'bcryptjs';
 
-export async function GET(req: Request) {
-    const url = new URL(req.url);
-    const password = url.searchParams.get('password');
-    
-    const DASHBOARD_PASSWORD_HASH = process.env.DASHBOARD_PASSWORD_HASH;
-
-    if (!DASHBOARD_PASSWORD_HASH) {
-        return NextResponse.json({ error: "Hash de Contraseña de Dashboard no configurado." }, { status: 500 });
-    }
-
-    if (!password) {
-        return NextResponse.json({ error: "Acceso denegado. Contraseña requerida." }, { status: 401 });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, DASHBOARD_PASSWORD_HASH);
-
-    if (!isPasswordValid) {
-        return NextResponse.json({ error: "Acceso denegado. Credenciales inválidas." }, { status: 401 });
-    }
-
+export async function POST(req: Request) {
     try {
+        const body = await req.json();
+        const { password } = body;
+
+        const DASHBOARD_PASSWORD_HASH = process.env.DASHBOARD_PASSWORD_HASH;
+
+        if (!DASHBOARD_PASSWORD_HASH) {
+            return NextResponse.json({ error: "Hash de Contraseña de Dashboard no configurado." }, { status: 500 });
+        }
+
+        if (!password) {
+            return NextResponse.json({ error: "Acceso denegado. Contraseña requerida." }, { status: 401 });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, DASHBOARD_PASSWORD_HASH);
+
+        if (!isPasswordValid) {
+            return NextResponse.json({ error: "Acceso denegado. Credenciales inválidas." }, { status: 401 });
+        }
+
         await connectDB();
 
         const totalInscripciones = await Inscripcion.countDocuments();
