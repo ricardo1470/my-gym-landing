@@ -161,18 +161,20 @@ export default function Testimonials() {
 
             {/* Modal */}
             <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-                <DialogContent className="max-w-xl"> {/* Aumentamos un poco el ancho del modal */}
+                <DialogContent className="max-w-xl p-0">
                     {selected && (
                         <>
-                            <DialogHeader>
-                                <DialogTitle>{selected.name}</DialogTitle>
-                                <DialogDescription className="text-primary font-semibold text-lg">{selected.result}</DialogDescription>
-                            </DialogHeader>
+                            <div className="p-6 sm:p-8">
+                                <DialogHeader>
+                                    <DialogTitle>{selected.name}</DialogTitle>
+                                    <DialogDescription className="text-primary font-semibold text-lg">{selected.result}</DialogDescription>
+                                </DialogHeader>
+                            </div>
 
-                            {/* 3. USAMOS EL CARRUSEL INTERACTIVO DENTRO DEL MODAL */}
+                            {/* 3. USAMOS EL CARRUSEL INTERACTIVO DENTRO DEL MODAL (este no debe tener padding) */}
                             <ModalImageCarousel images={selected.images} alt={selected.name} />
 
-                            <div className="text-center mt-4">
+                            <div className="text-center mt-4 p-6 sm:p-8 pt-0"> {/* Reintroducimos padding inferior, quitamos el superior */}
                                 <p className="italic text-lg text-muted-foreground mb-4">&ldquo;{selected.quote}&rdquo;</p>
                                 <p className="text-sm text-gray-700">{selected.story}</p>
                             </div>

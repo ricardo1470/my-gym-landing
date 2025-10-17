@@ -9,12 +9,6 @@ import {
   Pill,
   Users,
   CheckCircle,
-  Phone,
-  MapPin,
-  Mail,
-  MessageCircle,
-  Instagram,
-  Facebook,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
