@@ -6,7 +6,7 @@ export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASS, // contraseña de aplicación en Gmail
+    pass: process.env.GMAIL_PASS,
   },
 });
 
@@ -18,7 +18,7 @@ export async function sendConfirmationMail(
   try {
         const info = await transporter.sendMail({
             from: `"Entrenador Personal" <${process.env.GMAIL_USER}>`,
-            to: email, // Solo al cliente que se inscribe
+            to: email,
             subject: "¡Gracias por inscribirte a tu plan personalizado! 💪",
             text: `Hola ${nombre}, gracias por inscribirte. El plan "${planId}" ha sido registrado.
 En menos de 24 horas nos pondremos en contacto contigo.`,
@@ -47,7 +47,7 @@ En menos de 24 horas nos pondremos en contacto contigo.`,
 export async function sendAdminNotification(
     nombre: string,
     email: string,
-    phone: string, // Agregamos el teléfono para la notificación
+    phone: string,
     planId: string
 ) {
     if (!ADMIN_EMAIL) {
@@ -58,7 +58,7 @@ export async function sendAdminNotification(
     try {
         const info = await transporter.sendMail({
             from: `"Notificaciones LeadForm" <${process.env.GMAIL_USER}>`,
-            to: ADMIN_EMAIL, // Envía a tu correo (GMAIL_USER)
+            to: ADMIN_EMAIL,
             subject: `🚨 ¡NUEVO LEAD! - ${nombre} se inscribió al plan ${planId.toUpperCase()}`,
             html: `
                 <h2>Detalles de la Nueva Inscripción:</h2>
@@ -76,6 +76,5 @@ export async function sendAdminNotification(
         return info;
     } catch (error) {
         console.error("❌ Error enviando correo de notificación a Admin:", error);
-        // No lanzamos error aquí, ya que el correo del cliente fue enviado
     }
 }

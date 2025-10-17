@@ -4,7 +4,6 @@ import mongoose, { Schema, models } from "mongoose";
 const InscripcionSchema = new Schema({
   nombre: { type: String, required: true },
   email: { type: String, required: true },
-  // 💡 CORRECCIÓN APLICADA AQUÍ: Reemplazamos 'objetivo' por 'phone'
   phone: { type: String, required: true },
   planId: { type: String, enum: ['basico', 'premium', 'elite'], default: 'premium' },
   discountApplied: { type: Boolean, default: false },

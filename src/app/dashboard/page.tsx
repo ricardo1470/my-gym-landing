@@ -14,23 +14,20 @@ export default function DashboardPage() {
     const [password, setPassword] = useState('');
     const [isChecking, setIsChecking] = useState(false);
 
-    // Utilizamos la ruta /api/dashboard para verificar la contraseña
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsChecking(true);
 
         try {
-            // Hacemos una llamada a la API con la contraseña como parámetro de búsqueda
             const response = await fetch(`/api/dashboard?password=${encodeURIComponent(password)}`);
 
             if (response.ok) {
-                // Si la respuesta es 200 OK, significa que la contraseña es correcta
                 setIsAuthenticated(true);
                 toast.success('¡Acceso concedido! Bienvenido al Dashboard.');
             } else {
                 const result = await response.json();
                 toast.error('Error de acceso', result.error || 'Contraseña incorrecta. Inténtalo de nuevo.');
-                setPassword(''); // Limpiar el campo de contraseña
+                setPassword('');
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -41,11 +38,9 @@ export default function DashboardPage() {
     };
 
     if (isAuthenticated) {
-        // Si está autenticado, muestra el dashboard
         return <AdminDashboard password={password} />;
     }
 
-    // Pantalla de Login
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
             <Card className="w-full max-w-md">

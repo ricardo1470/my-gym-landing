@@ -22,10 +22,8 @@ import {
 } from 'recharts';
 import { toast } from 'sonner';
 
-// --- Interfaces de Datos ---
-
 interface PlanStat {
-    _id: string; // planId
+    _id: string;
     count: number;
 }
 
@@ -35,7 +33,7 @@ interface GeoStat {
 }
 
 interface HourlyStat {
-    _id: number; // hour (0-23)
+    _id: number;
     count: number;
 }
 
@@ -58,10 +56,9 @@ interface DashboardData {
 }
 
 interface AdminDashboardProps {
-    password: string; // La contraseña se pasa desde la página
+    password: string;
 }
 
-// Colores para los gráficos (ajústalos a tu paleta si es necesario)
 const COLORS = ['#FF8042', '#00C49F', '#0088FE', '#FFBB28'];
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
@@ -70,12 +67,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
     const [isResetting, setIsResetting] = useState(false);
 
     const handleLogout = () => {
-        // Al recargar, el componente padre (el login) perderá la contraseña en su estado,
-        // forzando al usuario a re-ingresar.
         window.location.href = '/';
     };
 
-    // --- Lógica de Carga de Datos ---
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
@@ -86,7 +80,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                 setData(result.stats ? { ...result.stats, cupos: result.cupos, lastCupoReset: result.lastCupoReset } : null);
             } else {
                 toast.error("Error al cargar datos", result.error);
-                // Si la contraseña es inválida, forzar la recarga para volver a la pantalla de login
                 if (response.status === 401) window.location.reload();
             }
         } catch (error) {
@@ -101,7 +94,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
         fetchData();
     }, [fetchData]);
 
-    // --- Lógica de Reseteo de Cupos ---
     const handleResetCupos = async () => {
         if (!confirm("¿Estás seguro de que quieres restablecer los contadores de cupos? Esto pondrá en 0 los 'cupos usados'.")) return;
 
@@ -117,7 +109,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
 
             if (response.ok) {
                 toast.success("¡Cupos restablecidos!", result.message);
-                fetchData(); // Recargar datos después del reseteo
+                fetchData();
             } else {
                 toast.error("Error al restablecer cupos", result.error);
             }
@@ -140,14 +132,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
         return <div className="text-center p-10 text-red-500">No se pudieron cargar los datos del dashboard.</div>;
     }
 
-    // Preparación de datos para gráficos
     const totalSelected = data.planSelections.reduce((sum, p) => sum + p.count, 0);
     const planChartData = data.planSelections.map(p => ({
         name: p._id.charAt(0).toUpperCase() + p._id.slice(1),
         value: p.count,
     }));
 
-    // Datos de tiempo de actividad (horas 0 a 23)
     const allHours = Array.from({ length: 24 }, (_, i) => i);
     const hourlyMap = new Map(data.hourlyData.map(h => [h._id, h.count]));
     const hourlyChartData = allHours.map(hour => ({
@@ -163,7 +153,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                     <Zap className="w-8 h-8 text-primary" />
                     Dashboard de Administración
                 </h1>
-                {/* Botón de Cerrar Sesión / Volver */}
                 <Button
                     variant="outline"
                     onClick={handleLogout}
@@ -173,7 +162,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
             </div>
             <p className="text-muted-foreground">Última actualización: {new Date().toLocaleTimeString()}</p>
 
-            {/* 1. Kpis principales */}
             <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -213,10 +201,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                 </Card>
             </div>
 
-            {/* 2. Gráficos de Comportamiento */}
             <div className="grid lg:grid-cols-2 gap-6">
 
-                {/* Distribución por Plan Seleccionado */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Planes más Populares ({totalSelected} Total)</CardTitle>
@@ -247,7 +233,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                     </CardContent>
                 </Card>
 
-                {/* Visitas por Hora */}
                 <Card>
                     <CardHeader>
                         <CardTitle>Actividad por Hora del Día</CardTitle>
@@ -269,7 +254,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                 </Card>
             </div>
 
-            {/* 3. Tabla de Cupos y Control de Reseteo */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
@@ -330,7 +314,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ password }) => {
                 </CardContent>
             </Card>
 
-            {/* 4. Tabla de Distribución Geográfica */}
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">

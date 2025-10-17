@@ -15,12 +15,8 @@ interface PlanDiscount {
 
 export async function POST(req: Request) {
   try {
-    // 💡 CORRECCIÓN APLICADA AQUÍ:
-    // Cambiamos 'nombre' por 'name' y 'objetivo' por 'phone'
     const { name, email, phone, planId } = await req.json();
 
-    // 💡 CORRECCIÓN APLICADA AQUÍ:
-    // Validamos los campos requeridos del formulario (name, email, phone)
     if (!name || !email || !phone) {
       return NextResponse.json({ error: "Todos los campos son obligatorios (nombre, email, teléfono)" }, { status: 400 });
     }
@@ -51,26 +47,20 @@ export async function POST(req: Request) {
       }, { status: 400 });
     }
 
-    // 💡 CORRECCIÓN APLICADA AQUÍ:
-    // Usamos 'name' y 'phone' en lugar de 'nombre' y 'objetivo'
     await Inscripcion.create({
-      nombre: name, // Mapea 'name' del payload a 'nombre' del modelo
+      nombre: name,
       email,
-      phone,         // ✅ CAMBIO CLAVE: Usa 'phone' para coincidir con Inscripcion.ts
+      phone,
       planId: selectedPlanId,
       discountApplied: true,
       discountPercentage: planDiscount.discountPercentage
     });
 
-    // ⚠️ Si tu modelo Inscripcion usa 'objetivo' en lugar de 'phone',
-    // deberías cambiar 'phone' a 'objetivo' aquí y en la desestructuración,
-    // O añadir 'phone' al modelo.
-
     planDiscount.usedCupos++;
     await cupo.save();
 
-    await sendConfirmationMail(name, email, selectedPlanId); // Nota: Cambié objetivo por selectedPlanId
-    await sendAdminNotification(name, email, phone, planId); // Incluimos el teléfono en la notificación al admin
+    await sendConfirmationMail(name, email, selectedPlanId);
+    await sendAdminNotification(name, email, phone, planId);
 
     return NextResponse.json({
             ok: true,

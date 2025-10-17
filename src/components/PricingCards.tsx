@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-// Importamos el Dialog de Shadcn
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
     CheckCircle,
@@ -14,11 +13,9 @@ import {
     MessageCircle,
     Trophy,
 } from "lucide-react"
-import LeadForm from './LeadForm'; // Importamos el nuevo componente
+import LeadForm from './LeadForm';
 import { toast } from 'sonner';
 
-// --- Interfaces de Datos (DEJAMOS LAS MISMAS) ---
-// ... (Tus interfaces Plan, PlanFeature, DiscountData, etc. siguen aquí) ...
 interface DiscountData {
     planId: string;
     maxCupos: number;
@@ -54,12 +51,10 @@ interface Plan {
 interface LeadFormData {
     name: string;
     email: string;
-    phone: string; // Asegúrate de incluir el teléfono
+    phone: string;
 }
 
-// --- Planes Base (DEJAMOS LOS MISMOS) ---
 const basePlans: Omit<Plan, 'discountedPrice' | 'discountPercentage' | 'availableCupos' | 'hasDiscount'>[] = [
-    // ... (Definición de basePlans sigue aquí) ...
     {
         id: "basico",
         name: "Plan Básico",
@@ -119,7 +114,6 @@ const basePlans: Omit<Plan, 'discountedPrice' | 'discountPercentage' | 'availabl
     }
 ];
 
-// --- Función de Formato (DEJAMOS LA MISMA) ---
 const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('es-CO', {
         style: 'currency',
@@ -129,22 +123,11 @@ const formatPrice = (price: number): string => {
     }).format(price)
 }
 
-// --- NUEVA LÓGICA: Redirigir a Pasarela de Pago y WhatsApp ---
-// Esta función será pasada al LeadForm
 const handlePaymentAndWhatsapp = (planId: string, planName: string, discountedPrice: number, formData: LeadFormData) => {
-
-    // --- Lógica 1: Pasarela de Pago (Simulación) ---
-    // Aquí es donde integrarías un SDK de pago (ej: Stripe, PayU, MercadoPago)
-    // Para la simulación, vamos a mostrar un mensaje.
 
     const paymentURL = `https://pay-gateway.com/checkout?plan=${planId}&price=${discountedPrice}&name=${formData.name}`;
 
-    // Abrir la pasarela de pago en una nueva pestaña (Comentar en Producción si usas un SDK)
     window.open(paymentURL, '_blank');
-
-    // --- Lógica 2: Enviar a WhatsApp después de 'pago confirmado' ---
-    // Asumimos que la persona completará el pago y luego irá a WhatsApp.
-    // Usaremos un temporizador para simular la redirección post-pago.
 
     toast.info("Esperando confirmación de pago...", {
         description: "Serás redirigido a WhatsApp en 5 segundos (simulación de pago exitoso).",
@@ -168,37 +151,31 @@ export default function PricingCards() {
     const [plans, setPlans] = useState<Plan[]>(basePlans as Plan[]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // --- Estado para el Modal ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
-    // --- Nueva Función para Abrir el Modal ---
     const handlePlanSelection = (plan: Plan) => {
-        // 1. Marcar la selección de plan (esto se registra en la API del Dashboard)
         fetch('/api/visit', { method: 'POST' }).catch(e => console.error('Failed to track plan selection:', e));
 
-        // 2. Abrir el modal con el plan seleccionado
         setSelectedPlan(plan);
         setIsModalOpen(true);
     }
 
-    // --- Función para Cerrar el Modal y Continuar al Pago (pasada al LeadForm) ---
     const handleLeadSubmission = (formData: LeadFormData) => {
         if (!selectedPlan) return;
 
-        setIsModalOpen(false); // Cierra el modal de formulario
+        setIsModalOpen(false);
 
         handlePaymentAndWhatsapp(
             selectedPlan.id,
             selectedPlan.name,
-            selectedPlan.discountedPrice ?? selectedPlan.price, // Usa el precio con descuento si existe
+            selectedPlan.discountedPrice ?? selectedPlan.price,
             formData
         );
     }
 
 
     useEffect(() => {
-        // ... (Tu lógica de fetchDiscounts es la misma) ...
         const fetchDiscounts = async () => {
             try {
                 const response = await fetch('/api/cupos');
@@ -212,7 +189,7 @@ export default function PricingCards() {
                     const updatedPlans = basePlans.map((plan) => {
                         const discount = discountsMap.get(plan.id);
 
-                        if (discount && discount.hasDiscount && discount.availableCupos > 0) { // Aseguramos que haya cupos
+                        if (discount && discount.hasDiscount && discount.availableCupos > 0) {
                             const discountAmount = plan.price * (discount.discountPercentage / 100);
                             const discountedPrice = plan.price - discountAmount;
 
@@ -300,7 +277,6 @@ export default function PricingCards() {
                                         <div className="text-xl font-normal text-muted-foreground line-through mb-1">
                                             {formatPrice(plan.price)}
                                         </div>
-                                        {/* 💡 CORRECCIÓN APLICADA AQUÍ */}
                                         {plan.hasDiscount && plan.availableCupos !== undefined && (
                                             <div className="flex justify-center mt-1 mb-2">
                                                 <Badge
@@ -350,7 +326,7 @@ export default function PricingCards() {
                                         : ''
                                     }`}
                                 variant={plan.buttonVariant}
-                                onClick={() => handlePlanSelection(plan)} // Pasamos el objeto plan completo
+                                onClick={() => handlePlanSelection(plan)}
                             >
                                 <MessageCircle className="w-5 h-5 mr-2" />
                                 {plan.buttonText}
@@ -364,7 +340,6 @@ export default function PricingCards() {
                 ))}
             </div>
 
-            {/* Modal para el formulario de Lead */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

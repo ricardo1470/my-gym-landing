@@ -1,7 +1,6 @@
 // src/models/Visit.ts
 import mongoose, { Schema, Document } from 'mongoose';
 
-// Interfaz para el documento de Visita
 export interface IVisit extends Document {
     timestamp: Date;
     country: string;

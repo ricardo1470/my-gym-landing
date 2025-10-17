@@ -11,7 +11,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Loader2, Zap, Smartphone, Mail, User } from 'lucide-react';
 import { toast } from 'sonner';
 
-// --- Esquema de Validación (Zod) ---
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
@@ -19,7 +18,7 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Ingresa un correo electrónico válido.",
   }),
-  phone: z.string().regex(/^\d{7,15}$/, { // Permite de 7 a 15 dígitos (ajustar según el formato de tu país)
+  phone: z.string().regex(/^\d{7,15}$/, {
     message: "Ingresa un número de teléfono válido (solo dígitos).",
   }),
 });
@@ -29,7 +28,7 @@ type LeadFormValues = z.infer<typeof formSchema>;
 interface LeadFormProps {
   planId: string;
   planName: string;
-  onSuccess: (formData: LeadFormValues) => void; // Callback para el siguiente paso (pago)
+  onSuccess: (formData: LeadFormValues) => void;
 }
 
 const LeadForm: React.FC<LeadFormProps> = ({ planId, planName, onSuccess }) => {
@@ -50,10 +49,9 @@ const LeadForm: React.FC<LeadFormProps> = ({ planId, planName, onSuccess }) => {
         ...values,
         planId,
         planName,
-        source: 'web_form', // Para seguimiento interno
+        source: 'web_form',
       };
 
-      // 1. Registrar el Lead en la base de datos
       const response = await fetch('/api/inscribir', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,7 +65,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ planId, planName, onSuccess }) => {
           description: `Plan: ${planName}. Por favor completa tu pago.`,
         });
 
-        // 2. Ejecutar el callback para pasar al siguiente paso (Pasarela de Pago)
         onSuccess(values);
 
       } else {
@@ -127,7 +124,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ planId, planName, onSuccess }) => {
               <FormItem>
                 <FormLabel className="flex items-center"><Smartphone className="w-4 h-4 mr-2" /> Número de WhatsApp</FormLabel>
                 <FormControl>
-                  {/* Nota: Usamos type="tel" y pattern para mejor UX en móviles */}
                   <Input
                     placeholder="Ej: 3101234567"
                     type="tel"

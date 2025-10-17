@@ -1,7 +1,7 @@
 // src/app/page.tsx
-"use client" // Ya lo tienes, ¡perfecto!
+"use client"
 
-import { useEffect, useState } from "react" // <-- Asegúrate de importar useEffect
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import {
   Dumbbell,
@@ -19,7 +19,7 @@ import Hero from "@/components/Hero"
 import Testimonials from "@/components/Testimonials"
 import PricingCards from "@/components/PricingCards"
 import Footer from '@/components/Footer';
-//import LeadForm from "@/components/LeadForm" // <--- Descomentado y añadido al final de la página
+//import LeadForm from "@/components/LeadForm"
 
 // Importaciones de UI
 import { Button } from "@/components/ui/button"
@@ -27,7 +27,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 //import LeadForm from "@/components/LeadForm"
 
-// 💡 FUNCIÓN DE TRACKING
 const trackVisit = async () => {
   try {
     await fetch('/api/visit', { method: 'POST' });
@@ -37,13 +36,12 @@ const trackVisit = async () => {
 };
 
 
-export default function Home() { // Usamos 'Home' por convención
+export default function Home() {
   const [currentImage, setCurrentImage] = useState(0)
 
-  // 💡 1. REGISTRAR LA VISITA AL MONTAR EL COMPONENTE
   useEffect(() => {
     trackVisit();
-  }, []); // Se ejecuta solo una vez al cargar la página
+  }, []);
 
   const carouselImages = [
     "/person-doing-intense-workout-in-modern-gym.jpg",
@@ -204,15 +202,12 @@ export default function Home() { // Usamos 'Home' por convención
         </div>
       </section>
 
-      {/* 💡 SECCIÓN DEL FORMULARIO DE CONTACTO (ContactForm) */}
       <section id="contact-form" className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-8 text-balance">
               Comienza tu <span className="text-primary">Transformación</span>
             </h2>
-            {/* Componente ContactForm agregado */}
-            {/*<LeadForm />*/}
           </div>
         </div>
       </section>

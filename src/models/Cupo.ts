@@ -2,7 +2,7 @@
 import mongoose, { Schema, models, model } from "mongoose";
 
 interface IPlanDiscount {
-  planId: string; // 'basico', 'premium', 'elite'
+  planId: string;
   maxCupos: number;
   usedCupos: number;
   discountPercentage: number;

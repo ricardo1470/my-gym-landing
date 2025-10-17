@@ -4,7 +4,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Star, ChevronLeft, ChevronRight } from "lucide-react" // 👈 Importamos Chevron
+import { Star, ChevronLeft, ChevronRight } from "lucide-react"
 import {
     Dialog,
     DialogContent,
@@ -12,9 +12,8 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button" // 👈 Necesitamos Button para el carrusel
+import { Button } from "@/components/ui/button"
 
-// Definición mejorada del tipo para TypeScript
 type Testimonial = {
     name: string;
     result: string;
@@ -23,7 +22,6 @@ type Testimonial = {
     story: string;
 };
 
-// 💡 Simulando 4 imágenes (aunque solo tienes 2, la lógica funcionará con 4)
 const testimonials: Testimonial[] = [
     {
         name: "Paola Calambas",
@@ -135,9 +133,8 @@ export default function Testimonials() {
                             onClick={() => setSelected(t)}
                         >
                             <CardHeader>
-                                {/* 💡 USAMOS LA IMAGEN ESTÁTICA (la segunda, que es el 'después') */}
                                 <TestimonialStaticImage
-                                    image={t.images[1]} // Usamos la imagen [1] (la segunda) como el resultado
+                                    image={t.images[1]}
                                     alt={t.name}
                                 />
                                 <CardTitle className="text-xl">{t.name}</CardTitle>
@@ -147,7 +144,6 @@ export default function Testimonials() {
                             </CardHeader>
                             <CardContent>
                                 <div className="flex justify-center mb-4">
-                                    {/* Mantenemos las estrellas */}
                                     {[...Array(5)].map((_, i) => (
                                         <Star key={i} className="w-5 h-5 fill-secondary text-secondary" />
                                     ))}
@@ -171,10 +167,9 @@ export default function Testimonials() {
                                 </DialogHeader>
                             </div>
 
-                            {/* 3. USAMOS EL CARRUSEL INTERACTIVO DENTRO DEL MODAL (este no debe tener padding) */}
                             <ModalImageCarousel images={selected.images} alt={selected.name} />
 
-                            <div className="text-center mt-4 p-6 sm:p-8 pt-0"> {/* Reintroducimos padding inferior, quitamos el superior */}
+                            <div className="text-center mt-4 p-6 sm:p-8 pt-0">
                                 <p className="italic text-lg text-muted-foreground mb-4">&ldquo;{selected.quote}&rdquo;</p>
                                 <p className="text-sm text-gray-700">{selected.story}</p>
                             </div>

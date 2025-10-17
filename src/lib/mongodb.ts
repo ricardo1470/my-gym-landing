@@ -7,7 +7,6 @@ type Cached = {
 };
 
 declare global {
-  // Necesario para evitar múltiples conexiones en dev
   var _mongoose: Cached | undefined;
 }
 
@@ -23,7 +22,7 @@ export async function connectDB() {
   }
 
   if (!cached!.promise) {
-    const uri = process.env.MONGODB_URI; // <- ahora se evalúa en runtime
+    const uri = process.env.MONGODB_URI;
 
     if (!uri) {
       throw new Error("Please define the MONGODB_URI environment variable");

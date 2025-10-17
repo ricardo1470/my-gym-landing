@@ -22,27 +22,27 @@ export default function Footer() {
                         </p>
                         <div className="flex space-x-4">
                             {/* Botón de Instagram */}
-                            <Button 
-                                variant="outline" 
-                                size="icon" 
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 className="border-gray-600 hover:bg-primary bg-transparent text-white hover:text-black"
                                 aria-label="Instagram"
                             >
                                 <Instagram className="w-5 h-5" />
                             </Button>
                             {/* Botón de Facebook */}
-                            <Button 
-                                variant="outline" 
-                                size="icon" 
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 className="border-gray-600 hover:bg-primary bg-transparent text-white hover:text-black"
                                 aria-label="Facebook"
                             >
                                 <Facebook className="w-5 h-5" />
                             </Button>
                             {/* Botón de Chat (WhatsApp/Mensaje) */}
-                            <Button 
-                                variant="outline" 
-                                size="icon" 
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 className="border-gray-600 hover:bg-primary bg-transparent text-white hover:text-black"
                                 aria-label="WhatsApp Chat"
                             >
