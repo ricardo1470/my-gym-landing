@@ -1,4 +1,4 @@
-// src/components/PricingCards.tsx (CÓDIGO ACTUALIZADO)
+// src/components/PricingCards.tsx (ACTUALIZADO CON PLAN DIARIO)
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -12,6 +12,8 @@ import {
     Dumbbell,
     MessageCircle,
     Trophy,
+    MapPin,
+    Clock,
 } from "lucide-react"
 import LeadForm from './LeadForm';
 import { toast } from 'sonner';
@@ -38,6 +40,7 @@ interface Plan {
     period: string
     popular?: boolean
     premium?: boolean
+    daily?: boolean
     features: PlanFeature[]
     icon: React.ReactElement
     buttonText: string
@@ -46,6 +49,7 @@ interface Plan {
     availableCupos?: number;
     discountedPrice?: number;
     hasDiscount?: boolean;
+    locationRestriction?: string;
 }
 
 interface LeadFormData {
@@ -55,6 +59,26 @@ interface LeadFormData {
 }
 
 const basePlans: Omit<Plan, 'discountedPrice' | 'discountPercentage' | 'availableCupos' | 'hasDiscount'>[] = [
+    {
+        id: "diario",
+        name: "Sesión Personal",
+        description: "1 hora de entrenamiento personalizado a domicilio",
+        price: 60000,
+        period: "sesión",
+        daily: true,
+        icon: <Clock className="w-6 h-6" />,
+        buttonText: "Reservar Sesión",
+        buttonVariant: "outline",
+        locationRestriction: "Cali, Colombia",
+        features: [
+            { text: "1 hora de entrenamiento personalizado", included: true },
+            { text: "El entrenador se desplaza a tu ubicación", included: true },
+            { text: "Asesoría enfocada en tus objetivos", included: true },
+            { text: "Disponible solo en Cali, Colombia", included: true },
+            { text: "Horario flexible según disponibilidad", included: true },
+            { text: "Sin compromiso de permanencia", included: true },
+        ]
+    },
     {
         id: "basico",
         name: "Plan Básico",
@@ -124,9 +148,7 @@ const formatPrice = (price: number): string => {
 }
 
 const handlePaymentAndWhatsapp = (planId: string, planName: string, discountedPrice: number, formData: LeadFormData) => {
-
     const paymentURL = `https://pay-gateway.com/checkout?plan=${planId}&price=${discountedPrice}&name=${formData.name}`;
-
     window.open(paymentURL, '_blank');
 
     toast.info("Esperando confirmación de pago...", {
@@ -146,26 +168,21 @@ const handlePaymentAndWhatsapp = (planId: string, planName: string, discountedPr
     }, 5000);
 };
 
-
 export default function PricingCards() {
     const [plans, setPlans] = useState<Plan[]>(basePlans as Plan[]);
     const [isLoading, setIsLoading] = useState(true);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
     const handlePlanSelection = (plan: Plan) => {
         fetch('/api/visit', { method: 'POST' }).catch(e => console.error('Failed to track plan selection:', e));
-
         setSelectedPlan(plan);
         setIsModalOpen(true);
     }
 
     const handleLeadSubmission = (formData: LeadFormData) => {
         if (!selectedPlan) return;
-
         setIsModalOpen(false);
-
         handlePaymentAndWhatsapp(
             selectedPlan.id,
             selectedPlan.name,
@@ -173,7 +190,6 @@ export default function PricingCards() {
             formData
         );
     }
-
 
     useEffect(() => {
         const fetchDiscounts = async () => {
@@ -225,7 +241,8 @@ export default function PricingCards() {
 
     if (isLoading) {
         return (
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                <div className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
                 <div className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
                 <div className="h-[550px] bg-gray-200 rounded-lg animate-pulse"></div>
                 <div className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
@@ -235,39 +252,56 @@ export default function PricingCards() {
 
     return (
         <>
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                 {plans.map((plan) => (
                     <Card
                         key={plan.id}
-                        className={`relative transition-all duration-300 hover:shadow-xl ${plan.popular
-                            ? 'border-primary shadow-lg scale-105'
-                            : plan.premium
-                                ? 'border-yellow-500 shadow-lg'
-                                : 'border-border hover:scale-102'
-                            }`}
+                        className={`relative transition-all duration-300 hover:shadow-xl ${
+                            plan.popular
+                                ? 'border-primary shadow-lg md:scale-105'
+                                : plan.premium
+                                    ? 'border-yellow-500 shadow-lg'
+                                    : plan.daily
+                                        ? 'border-blue-500 shadow-md'
+                                        : 'border-border hover:scale-102'
+                        }`}
                     >
-                        {(plan.popular || plan.premium) && (
+                        {(plan.popular || plan.premium || plan.daily) && (
                             <Badge
-                                className={`absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 ${plan.popular ? 'bg-primary text-primary-foreground' : 'bg-yellow-500 text-black'}`}
+                                className={`absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 ${
+                                    plan.popular
+                                        ? 'bg-primary text-primary-foreground'
+                                        : plan.premium
+                                            ? 'bg-yellow-500 text-black'
+                                            : 'bg-blue-500 text-white'
+                                }`}
                             >
-                                {plan.popular ? 'Más Popular' : 'Premium'}
+                                {plan.popular ? 'Más Popular' : plan.premium ? 'Premium' : 'Pago por Sesión'}
                             </Badge>
                         )}
 
-
                         <CardHeader className="text-center pb-2">
-                            <div className={`w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center ${plan.popular
-                                ? 'bg-primary text-primary-foreground'
-                                : plan.premium
-                                    ? 'bg-yellow-500 text-black'
-                                    : 'bg-muted text-muted-foreground'
-                                }`}>
+                            <div className={`w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                                plan.popular
+                                    ? 'bg-primary text-primary-foreground'
+                                    : plan.premium
+                                        ? 'bg-yellow-500 text-black'
+                                        : plan.daily
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-muted text-muted-foreground'
+                            }`}>
                                 {plan.icon}
                             </div>
                             <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                             <CardDescription className="text-base mt-2">
                                 {plan.description}
                             </CardDescription>
+                            {plan.locationRestriction && (
+                                <div className="flex items-center justify-center gap-1 mt-2 text-sm text-blue-600">
+                                    <MapPin className="w-4 h-4" />
+                                    <span>{plan.locationRestriction}</span>
+                                </div>
+                            )}
                         </CardHeader>
 
                         <CardContent className="pt-4">
@@ -279,9 +313,7 @@ export default function PricingCards() {
                                         </div>
                                         {plan.hasDiscount && plan.availableCupos !== undefined && (
                                             <div className="flex justify-center mt-1 mb-2">
-                                                <Badge
-                                                    className="bg-red-600 text-white flex items-center gap-1 animate-pulse"
-                                                >
+                                                <Badge className="bg-red-600 text-white flex items-center gap-1 animate-pulse">
                                                     {plan.discountPercentage}% OFF - {plan.availableCupos} Cupos
                                                 </Badge>
                                             </div>
@@ -291,11 +323,10 @@ export default function PricingCards() {
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="text-4xl font-bold text-primary mb-1">
+                                    <div className={`text-4xl font-bold mb-1 ${plan.daily ? 'text-blue-600' : 'text-primary'}`}>
                                         {formatPrice(plan.price)}
                                     </div>
                                 )}
-
                                 <div className="text-muted-foreground">por {plan.period}</div>
                             </div>
 
@@ -303,15 +334,17 @@ export default function PricingCards() {
                                 {plan.features.map((feature, index) => (
                                     <li key={index} className="flex items-start space-x-3">
                                         <CheckCircle
-                                            className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature.included
-                                                ? 'text-green-500'
-                                                : 'text-gray-300'
-                                                }`}
+                                            className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                                                feature.included
+                                                    ? 'text-green-500'
+                                                    : 'text-gray-300'
+                                            }`}
                                         />
-                                        <span className={`text-sm ${feature.included
-                                            ? 'text-foreground'
-                                            : 'text-muted-foreground line-through'
-                                            }`}>
+                                        <span className={`text-sm ${
+                                            feature.included
+                                                ? 'text-foreground'
+                                                : 'text-muted-foreground line-through'
+                                        }`}>
                                             {feature.text}
                                         </span>
                                     </li>
@@ -319,12 +352,15 @@ export default function PricingCards() {
                             </ul>
 
                             <Button
-                                className={`w-full text-lg py-6 ${plan.popular
-                                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                                    : plan.premium
-                                        ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
-                                        : ''
-                                    }`}
+                                className={`w-full text-lg py-6 ${
+                                    plan.popular
+                                        ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                                        : plan.premium
+                                            ? 'bg-yellow-500 hover:bg-yellow-600 text-black'
+                                            : plan.daily
+                                                ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                                : ''
+                                }`}
                                 variant={plan.buttonVariant}
                                 onClick={() => handlePlanSelection(plan)}
                             >
@@ -333,7 +369,7 @@ export default function PricingCards() {
                             </Button>
 
                             <p className="text-xs text-muted-foreground text-center mt-3">
-                                Sin permanencia • Cancela cuando quieras
+                                {plan.daily ? 'Reserva tu sesión ahora' : 'Sin permanencia • Cancela cuando quieras'}
                             </p>
                         </CardContent>
                     </Card>
@@ -343,7 +379,9 @@ export default function PricingCards() {
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle className="text-center">Inscripción al Plan {selectedPlan?.name}</DialogTitle>
+                        <DialogTitle className="text-center">
+                            Inscripción al {selectedPlan?.name}
+                        </DialogTitle>
                         <CardDescription className="sr-only">
                             Formulario para ingresar tus datos personales antes de proceder al pago.
                         </CardDescription>
