@@ -22,12 +22,12 @@ export default function Header() {
                             Servicios
                         </Link>
 
-                        <Link href="/store" passHref>
+                        {/*<Link href="/store" passHref>
                             <Button variant="outline" className="gap-2 bg-transparent">
                                 <ShoppingBag className="w-4 h-4" />
                                 Tienda
                             </Button>
-                        </Link>
+                        </Link>*/}
                     </nav>
                 </div>
             </div>

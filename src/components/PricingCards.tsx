@@ -1,4 +1,4 @@
-// src/components/PricingCards.tsx (ACTUALIZADO CON PLAN DIARIO)
+// src/components/PricingCards.tsx (ACTUALIZADO CON FLUJO COMPLETO)
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -14,8 +14,10 @@ import {
     Trophy,
     MapPin,
     Clock,
+    Loader2,
 } from "lucide-react"
 import LeadForm from './LeadForm';
+import CalendarBooking from './CalendarBooking';
 import { toast } from 'sonner';
 
 interface DiscountData {
@@ -76,6 +78,7 @@ const basePlans: Omit<Plan, 'discountedPrice' | 'discountPercentage' | 'availabl
             { text: "Asesoría enfocada en tus objetivos", included: true },
             { text: "Disponible solo en Cali, Colombia", included: true },
             { text: "Horario flexible según disponibilidad", included: true },
+            { text: "persona adisional tendra un valor adicional de $20.000", included: true },
             { text: "Sin compromiso de permanencia", included: true },
         ]
     },
@@ -147,48 +150,163 @@ const formatPrice = (price: number): string => {
     }).format(price)
 }
 
-const handlePaymentAndWhatsapp = (planId: string, planName: string, discountedPrice: number, formData: LeadFormData) => {
-    const paymentURL = `https://pay-gateway.com/checkout?plan=${planId}&price=${discountedPrice}&name=${formData.name}`;
-    window.open(paymentURL, '_blank');
-
-    toast.info("Esperando confirmación de pago...", {
-        description: "Serás redirigido a WhatsApp en 5 segundos (simulación de pago exitoso).",
-        duration: 5000,
-    });
-
-    setTimeout(() => {
-        const whatsappMessage = encodeURIComponent(
-            `¡Hola! Acabo de completar el registro y el pago para el ${planName} por ${formatPrice(discountedPrice)}. Mi nombre es ${formData.name}.`
-        );
-        window.open(`https://wa.me/573185228487?text=${whatsappMessage}`, '_blank');
-        toast.success("¡Pago completado!", {
-            description: "Te hemos enviado a WhatsApp para que coordines el inicio con tu entrenador.",
-            duration: 5000,
-        });
-    }, 5000);
-};
+type FlowStep = 'selection' | 'form' | 'payment' | 'calendar';
 
 export default function PricingCards() {
     const [plans, setPlans] = useState<Plan[]>(basePlans as Plan[]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+    const [flowStep, setFlowStep] = useState<FlowStep>('selection');
+    const [reservaId, setReservaId] = useState<string>('');
+    const [paymentSessionToken, setPaymentSessionToken] = useState<string>('');
 
     const handlePlanSelection = (plan: Plan) => {
-        fetch('/api/visit', { method: 'POST' }).catch(e => console.error('Failed to track plan selection:', e));
+        fetch('/api/visit', { method: 'POST' }).catch(e => console.error('Failed to track:', e));
         setSelectedPlan(plan);
+        setFlowStep('form');
         setIsModalOpen(true);
     }
 
-    const handleLeadSubmission = (formData: LeadFormData) => {
+    const handleLeadSubmission = async (formData: LeadFormData) => {
         if (!selectedPlan) return;
+        
+        // El inscripcionId ya viene del formulario
+        const response = await fetch('/api/inscribir', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...formData,
+                planId: selectedPlan.id,
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.ok && data.inscripcionId) {
+            setFlowStep('payment');
+            handlePaymentFlow(data.inscripcionId);
+        }
+    }
+
+    const handlePaymentFlow = async (inscrId: string) => {
+        
+        try {
+            // Iniciar proceso de pago
+            const paymentResponse = await fetch('/api/payment/nequi', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    inscripcionId: inscrId,
+                })
+            });
+
+            const paymentData = await paymentResponse.json();
+
+            if (paymentData.ok) {
+                if (!paymentData.sessionToken) {
+                    toast.error("No se pudo iniciar sesión de pago segura");
+                    return;
+                }
+
+                setReservaId(paymentData.reservaId);
+                setPaymentSessionToken(paymentData.sessionToken);
+                
+                if (paymentData.simulationMode) {
+                    toast.info("Modo simulación activado", {
+                        description: "El pago se aprobará automáticamente para pruebas",
+                        duration: 3000,
+                    });
+                } else {
+                    toast.success("Notificación enviada a Nequi", {
+                        description: "Verifica tu app Nequi para confirmar el pago",
+                        duration: 10000,
+                    });
+                }
+
+                // En ambos modos el estado se confirma desde backend.
+                checkPaymentStatus(paymentData.reservaId, paymentData.sessionToken);
+            } else {
+                toast.error(paymentData.error || "Error iniciando pago");
+            }
+        } catch (error) {
+            console.error("Error en pago:", error);
+            toast.error("Error procesando el pago");
+        }
+    }
+
+    const checkPaymentStatus = async (resId: string, token: string) => {
+        const maxAttempts = 60; // 5 minutos máximo (60 * 5 segundos)
+        let attempts = 0;
+
+        const pollStatus = async () => {
+            try {
+                const response = await fetch(`/api/payment/status?reservaId=${resId}&token=${encodeURIComponent(token)}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const data = await response.json();
+
+                if (response.status === 403 || response.status === 400) {
+                    toast.error("Sesión de pago inválida o expirada", {
+                        description: "Cierra y vuelve a iniciar el proceso de pago.",
+                    });
+                    setIsModalOpen(false);
+                    return;
+                }
+
+                if (response.status === 429) {
+                    attempts++;
+                    if (attempts < maxAttempts) {
+                        const retryAfter = Number(response.headers.get('Retry-After') || '5');
+                        setTimeout(pollStatus, Math.max(5, retryAfter) * 1000);
+                    }
+                    return;
+                }
+
+                if (data.pagoEstado === 'aprobado') {
+                    toast.success("¡Pago confirmado!", {
+                        description: "Ahora puedes agendar tu horario",
+                    });
+                    setFlowStep('calendar');
+                    return;
+                }
+
+                if (data.pagoEstado === 'rechazado') {
+                    toast.error("Pago rechazado", {
+                        description: "El pago fue rechazado. Por favor intenta nuevamente.",
+                    });
+                    setIsModalOpen(false);
+                    return;
+                }
+
+                attempts++;
+                if (attempts < maxAttempts) {
+                    setTimeout(pollStatus, 5000); // Verificar cada 5 segundos
+                } else {
+                    toast.warning("Tiempo de espera agotado", {
+                        description: "No hemos recibido confirmación del pago. Verifica tu cuenta.",
+                    });
+                }
+            } catch (error) {
+                console.error("Error verificando pago:", error);
+                attempts++;
+                if (attempts < maxAttempts) {
+                    setTimeout(pollStatus, 5000);
+                }
+            }
+        };
+
+        pollStatus();
+    }
+
+    const handleBookingComplete = () => {
         setIsModalOpen(false);
-        handlePaymentAndWhatsapp(
-            selectedPlan.id,
-            selectedPlan.name,
-            selectedPlan.discountedPrice ?? selectedPlan.price,
-            formData
-        );
+        setFlowStep('selection');
+        setSelectedPlan(null);
+        setReservaId('');
+        setPaymentSessionToken('');
     }
 
     useEffect(() => {
@@ -226,11 +344,9 @@ export default function PricingCards() {
                     });
 
                     setPlans(updatedPlans);
-                } else {
-                    console.error("Error al cargar descuentos:", data.error);
                 }
             } catch (error) {
-                console.error("Error de red al cargar descuentos:", error);
+                console.error("Error cargando descuentos:", error);
             } finally {
                 setIsLoading(false);
             }
@@ -242,10 +358,9 @@ export default function PricingCards() {
     if (isLoading) {
         return (
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-                <div className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
-                <div className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
-                <div className="h-[550px] bg-gray-200 rounded-lg animate-pulse"></div>
-                <div className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="h-[500px] bg-gray-100 rounded-lg animate-pulse"></div>
+                ))}
             </div>
         );
     }
@@ -311,7 +426,7 @@ export default function PricingCards() {
                                         <div className="text-xl font-normal text-muted-foreground line-through mb-1">
                                             {formatPrice(plan.price)}
                                         </div>
-                                        {plan.hasDiscount && plan.availableCupos !== undefined && (
+                                        {plan.availableCupos !== undefined && (
                                             <div className="flex justify-center mt-1 mb-2">
                                                 <Badge className="bg-red-600 text-white flex items-center gap-1 animate-pulse">
                                                     {plan.discountPercentage}% OFF - {plan.availableCupos} Cupos
@@ -377,20 +492,38 @@ export default function PricingCards() {
             </div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-center">
-                            Inscripción al {selectedPlan?.name}
+                            {flowStep === 'form' && `Inscripción al ${selectedPlan?.name}`}
+                            {flowStep === 'payment' && 'Procesando Pago...'}
+                            {flowStep === 'calendar' && 'Agenda tu Horario'}
                         </DialogTitle>
-                        <CardDescription className="sr-only">
-                            Formulario para ingresar tus datos personales antes de proceder al pago.
-                        </CardDescription>
                     </DialogHeader>
-                    {selectedPlan && (
+                    
+                    {flowStep === 'form' && selectedPlan && (
                         <LeadForm
                             planId={selectedPlan.id}
                             planName={selectedPlan.name}
                             onSuccess={handleLeadSubmission}
+                        />
+                    )}
+
+                    {flowStep === 'payment' && (
+                        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                            <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                            <h3 className="text-xl font-semibold">Procesando tu pago...</h3>
+                            <p className="text-muted-foreground text-center">
+                                Serás redirigido a Nequi para completar el pago de forma segura.
+                            </p>
+                        </div>
+                    )}
+
+                    {flowStep === 'calendar' && reservaId && (
+                        <CalendarBooking
+                            reservaId={reservaId}
+                            paymentSessionToken={paymentSessionToken}
+                            onComplete={handleBookingComplete}
                         />
                     )}
                 </DialogContent>

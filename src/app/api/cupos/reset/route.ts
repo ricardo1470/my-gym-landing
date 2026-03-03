@@ -3,12 +3,19 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Cupo from '@/models/Cupo';
+import bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
     const { password } = await req.json();
-    const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD;
+    const DASHBOARD_PASSWORD_HASH = process.env.DASHBOARD_PASSWORD_HASH;
 
-    if (password !== DASHBOARD_PASSWORD) {
+    if (!password || !DASHBOARD_PASSWORD_HASH) {
+        return NextResponse.json({ error: "Acceso denegado. Credenciales inválidas." }, { status: 401 });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, DASHBOARD_PASSWORD_HASH);
+
+    if (!isPasswordValid) {
         return NextResponse.json({ error: "Acceso denegado. Contraseña incorrecta." }, { status: 401 });
     }
 

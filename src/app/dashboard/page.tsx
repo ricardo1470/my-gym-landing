@@ -19,14 +19,20 @@ export default function DashboardPage() {
         setIsChecking(true);
 
         try {
-            const response = await fetch(`/api/dashboard?password=${encodeURIComponent(password)}`);
+            const response = await fetch('/api/dashboard', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            });
 
             if (response.ok) {
                 setIsAuthenticated(true);
                 toast.success('¡Acceso concedido! Bienvenido al Dashboard.');
             } else {
                 const result = await response.json();
-                toast.error('Error de acceso', result.error || 'Contraseña incorrecta. Inténtalo de nuevo.');
+                toast.error('Error de acceso', {
+                    description: result.error || 'Contraseña incorrecta. Inténtalo de nuevo.',
+                });
                 setPassword('');
             }
         } catch (error) {

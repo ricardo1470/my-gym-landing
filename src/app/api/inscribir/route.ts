@@ -1,5 +1,4 @@
 // src/app/api/inscribir/route.ts
-
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Cupo from "@/models/Cupo";
@@ -18,59 +17,82 @@ export async function POST(req: Request) {
     const { name, email, phone, planId } = await req.json();
 
     if (!name || !email || !phone) {
-      return NextResponse.json({ error: "Todos los campos son obligatorios (nombre, email, teléfono)" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Todos los campos son obligatorios (nombre, email, teléfono)" },
+        { status: 400 }
+      );
     }
 
     const selectedPlanId = planId || 'premium';
 
-    if (!['basico', 'premium', 'elite'].includes(selectedPlanId)) {
-      return NextResponse.json({ error: "Plan ID inválido" }, { status: 400 });
+    if (!['diario', 'basico', 'premium', 'elite'].includes(selectedPlanId)) {
+      return NextResponse.json(
+        { error: "Plan ID inválido" },
+        { status: 400 }
+      );
     }
 
     await connectDB();
 
-    const cupo = await Cupo.findOne();
+    // Verificar descuentos solo para planes mensuales (no para "diario")
+    let discountApplied = false;
+    let discountPercentage = 0;
+    let remainingCupos = 0;
 
-    if (!cupo) {
-      return NextResponse.json({ error: "No hay cupos configurados" }, { status: 500 });
+    if (selectedPlanId !== 'diario') {
+      const cupo = await Cupo.findOne();
+
+      if (cupo) {
+        const planDiscount = cupo.planDiscounts.find(
+          (p: PlanDiscount) => p.planId === selectedPlanId
+        );
+
+        if (planDiscount && planDiscount.usedCupos < planDiscount.maxCupos) {
+          discountApplied = true;
+          discountPercentage = planDiscount.discountPercentage;
+          
+          // Usar el cupo de descuento
+          planDiscount.usedCupos++;
+          await cupo.save();
+          
+          remainingCupos = planDiscount.maxCupos - planDiscount.usedCupos;
+        }
+      }
     }
 
-    const planDiscount = cupo.planDiscounts.find((p: PlanDiscount) => p.planId === selectedPlanId);
-
-    if (!planDiscount) {
-      return NextResponse.json({ error: "Plan no encontrado" }, { status: 404 });
-    }
-
-    if (planDiscount.usedCupos >= planDiscount.maxCupos) {
-      return NextResponse.json({
-        error: `Ya no quedan cupos con descuento disponibles para el plan ${selectedPlanId}`
-      }, { status: 400 });
-    }
-
-    await Inscripcion.create({
+    // Crear inscripción
+    const inscripcion = await Inscripcion.create({
       nombre: name,
       email,
       phone,
       planId: selectedPlanId,
-      discountApplied: true,
-      discountPercentage: planDiscount.discountPercentage
+      discountApplied,
+      discountPercentage,
     });
 
-    planDiscount.usedCupos++;
-    await cupo.save();
-
-    await sendConfirmationMail(name, email, selectedPlanId);
-    await sendAdminNotification(name, email, phone, planId);
+    // Enviar emails
+    try {
+      await sendConfirmationMail(name, email, selectedPlanId);
+      await sendAdminNotification(name, email, phone, selectedPlanId);
+    } catch (emailError) {
+      console.error("Error enviando emails:", emailError);
+      // Continuar aunque fallen los emails
+    }
 
     return NextResponse.json({
-            ok: true,
-            message: "Inscripción exitosa con descuento aplicado",
-            planId: selectedPlanId,
-            discountPercentage: planDiscount.discountPercentage,
-            remainingCupos: planDiscount.maxCupos - planDiscount.usedCupos
-        });
+      ok: true,
+      message: "Inscripción exitosa",
+      inscripcionId: inscripcion._id,
+      planId: selectedPlanId,
+      discountApplied,
+      discountPercentage,
+      remainingCupos,
+    });
   } catch (err: unknown) {
-    console.error(err);
-    return NextResponse.json({ error: "Error interno" }, { status: 500 });
+    console.error("Error en inscripción:", err);
+    return NextResponse.json(
+      { error: "Error interno" },
+      { status: 500 }
+    );
   }
 }
